@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html>
-<!-- Author: Cozy https://github.com/ItsCosmas -->
 <head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -44,12 +43,18 @@
         <input type="checkbox" name="checkbox" style="margin-right:5px;" id="checkbox"><label for="check"> I agree to Terms and Conditions</label></br>
         <button type="submit" name="register" class="btn btn-primary">Register</button>
         <div style="margin-top:10px" id="errors">
-                            <?php 
-                            if(isset($errors)){
-                                echo $errors;
-                            }
-                            ?>
-                    </div>
+            <?php 
+            if(isset($_SESSION['registration_errors'])){
+                echo $_SESSION['registration_errors'];
+                unset($_SESSION['registration_errors']);
+            }
+
+            if(isset($_SESSION['message'])){
+                echo $_SESSION['message'];
+                unset($_SESSION['message']);
+            }
+            ?>
+        </div>
         </form>
     </div>
 </div>
@@ -57,7 +62,6 @@
 </body>
 <script>
 
-// validates password details
 function Validate(){
     var pass = document.getElementById("password");
     var confirmPass = document.getElementById("confirmPassword");
@@ -71,12 +75,13 @@ function Validate(){
     return false
 }
 
-// This Function Checks to ensure name is not empty
 function validateNameDetails() {
     var name = document.forms['signUp']['fullName'].value;
     var nameHelp = document.getElementById("nameHelp");
         if (name == ""){
             nameHelp.innerHTML = "<small id=\"nameHelp\" class=\"form-text text-muted alert alert-warning\">Name Cannot be Empty</small>";
+        } else {
+             nameHelp.innerHTML = "";
         }
 }
 </script>

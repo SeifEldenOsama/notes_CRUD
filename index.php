@@ -1,5 +1,4 @@
 <?php
-/* Author: Cozy👽 https://github.com/ItsCosmas */
 include_once ('backend/connection.php');
 include_once ('backend/functions/main.php');
 
@@ -10,91 +9,253 @@ $notes = $theNotes->getAllNotes();
 $check_login = $check->logged_in();
 if($check_login === false){
     header('Location: backend/login.php');
-}else{
-
+    exit;
+}
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>CRUD</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" type="text/css" media="screen" href="CSS/style.css" />
-    <script src="main.js"></script>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">    
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script src="ckeditor/ckeditor.js"></script> <!-- CK Editor-->
+<meta charset="utf-8">
+<title>CRUD Notes</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css">
+
+<script src="ckeditor/ckeditor.js"></script>
+
+<style>
+    body {
+        background-color: #f0f2f5;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    .container-header {
+        background-color: #0d47a1;
+        color: #fff;
+        padding: 20px 30px;
+        border-radius: 8px;
+        margin-top: 30px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+
+    .table-scroll {
+        max-height: 70vh; 
+        overflow-y: auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08); 
+        background-color: #fff;
+        margin-top: 20px;
+    }
+
+    .table-scroll thead th {
+        position: sticky;
+        top: 0;
+        background: #343a40;
+        color: #fff;
+        z-index: 2;
+    }
+    
+    table.table tbody tr:hover {
+        background-color: #e3f2fd;
+        transition: 0.2s;
+    }
+
+    .note-content-cell {
+        max-width: 480px; 
+        white-space: normal; 
+        overflow: hidden;
+        text-overflow: ellipsis; 
+        font-size: 0.95rem;
+        color: #555;
+    }
+
+    .btn-primary {
+        background-color: #0d47a1;
+        border-color: #0d47a1;
+        border-radius: 50px;
+        transition: background-color 0.2s;
+    }
+    .btn-primary:hover {
+        background-color: #1565c0;
+        border-color: #1565c0;
+    }
+    .btn-danger {
+        border-radius: 50px;
+    }
+    .btn-light {
+        color: #0d47a1; 
+    }
+
+    .form-section {
+        background-color: #ffffff;
+        padding: 30px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border-top: 3px solid #0d47a1;
+    }
+
+    .form-section h6 {
+        font-weight: 700;
+        color: #333;
+    }
+
+    input[type="text"], textarea {
+        border-radius: 6px;
+        border: 1px solid #ced4da;
+        padding: 10px;
+    }
+
+    hr {
+        border-top: 1px solid #b3e5fc;
+        margin: 1.5rem 0;
+    }
+
+    .cke_contents {
+        border-radius: 6px !important;
+        box-shadow: none !important;
+        border: 1px solid #ced4da !important;
+        min-height: 250px !important;
+    }
+
+    .cke_top {
+        border-radius: 6px 6px 0 0;
+        background: #f8f9fa !important;
+        border: none !important;
+    }
+
+    @media (max-width: 768px) {
+        .container-header {
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        .btn {
+            margin-top: 10px;
+        }
+    }
+</style>
 </head>
+
 <body>
-<div class="container">
-<h6>Welcome <?php echo $_SESSION['username'] ?></h6>
-<Button type="button" class="btn btn-secondary" onClick="logOut()">Log Out</Button>
+
+<div class="container container-header">
+    <h5><i class="fas fa-sticky-note" style="margin-right: 10px;"></i> Welcome, <?php echo htmlspecialchars($_SESSION['username']); ?></h5> 
+    <button class="btn btn-light btn-sm" onclick="logOut()"><i class="fas fa-sign-out-alt"></i> Logout</button>
 </div>
+
 <hr>
 
-<div class="container">
-<!-- A Bootstrap Table -->
-<table class="table">
-  <thead>
-    <tr>
-      <th scope="col">note ID</th>
-      <th scope="col">note Title</th>
-      <th scope="col">note Content</th>
-      <th scope="col">note TimeStamp</th>
-      <th scope="col">Action</th>
-    </tr>
-  </thead>
-  <tbody>
-        
-        <?php foreach($notes as $notes){?>
-            <tr>
-                    <th scope="row"><h6><?php echo $notes['noteID']?></h6></th>
-                    <td><h6><?php echo $notes['noteTitle']?></h6></td>
-                    <td><?php echo $notes['noteContent']?></td>
-                    <td><span><?php echo $notes['noteDate']?></span></td>
-                    <td><a href="backend/edit.php?noteID=<?php echo $notes['noteID'];?>"><Button type="button" class="btn btn-primary">Edit</Button></a>
-                    <Button type="button" class="btn btn-danger" name="<?php echo $notes['noteID']; ?>" onClick="deleteNote(<?php echo $notes['noteID']; ?>)">Delete</Button></td>
-            </tr>    
-        <?php } ?>
-  </tbody>
-</table>
-</div> <hr>
-<form action="backend/submit.php" method="POST">
-<div class="container">
-<div class="col-lg-8 col-md-8 col-sm-12 col-xs-12 text-left">
-<label for="noteTitle"><h6>Note Title</h6></label><br>
-<input type="text" name="noteTitle" id="" ><br />
-<br>
-<label for="noteContent"><h6>Note Content</h6></label><br>
-<textarea name="noteContent" id="editor" cols="30" rows="8"></textarea><br><br>
-<button type="submit" class="btn btn-primary">Publish</button></div>
+<div class="container form-section">
+    <h6>Add New Note</h6>
+    <form action="backend/submit.php" method="POST" onsubmit="return validateForm();">
+        <div class="form-group">
+            <label><h6>Note Title</h6></label>
+            <input type="text" name="noteTitle" class="form-control" placeholder="Enter your note title">
+        </div>
+
+        <div class="form-group">
+            <label><h6>Note Content</h6></label>
+            <textarea name="noteContent" id="editor" rows="8" placeholder="Write your note here..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-lg"><i class="fas fa-paper-plane"></i> Publish Note</button>
+    </form>
 </div>
-</form>
-<div class="container">
-<!--show erros if isset-->
-<?php if(isset($errors)){
-                                echo $errors;
-                            }?>
+
+<div class="container mb-4">
+    <h6 style="font-weight: 700; color: #333; margin-bottom: 10px;">All Notes</h6>
+    <div class="table-scroll table-responsive">
+        <table class="table table-striped table-bordered table-hover">
+            <thead>
+                <tr>
+                    <th>Note ID</th>
+                    <th>Title</th>
+                    <th style="min-width: 500px;">Content</th> 
+                    <th>Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                <?php foreach($notes as $note){ ?>
+                <tr>
+                    <td><?php echo htmlspecialchars($note['noteID']); ?></td>
+                    <td><?php echo htmlspecialchars($note['noteTitle']); ?></td>
+                    <td class="note-content-cell">
+                        <?php 
+                            $clean_content = strip_tags($note['noteContent']);
+                         
+                            $max_length = 150;
+                            if (strlen($clean_content) > $max_length) {
+                                $display_content = substr($clean_content, 0, $max_length) . '...';
+                            } else {
+                                $display_content = $clean_content;
+                            }
+                  
+                            echo htmlspecialchars($display_content);
+                        ?>
+                    </td>
+                    <td><?php echo htmlspecialchars($note['noteDate']); ?></td>
+                    <td>
+                        <a href="backend/edit.php?noteID=<?php echo htmlspecialchars($note['noteID']); ?>" class="btn btn-primary btn-sm"><i class="fas fa-edit"></i> Edit</a>
+                        <button class="btn btn-danger btn-sm" onclick="deleteNote(<?php echo htmlspecialchars($note['noteID']); ?>)"><i class="fas fa-trash-alt"></i> Delete</button>
+                    </td>
+                </tr>
+                <?php } ?>
+            </tbody>
+        </table>
+    </div>
 </div>
-    
+
+
+<div class="container mt-3">
+    <?php
+        if(isset($_SESSION['errors'])){
+            echo $_SESSION['errors'];
+            unset($_SESSION['errors']);
+        }
+    ?>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
 <script>
-//<!-- This Script Adds CK Editor to the page -->
-CKEDITOR.replace( 'editor' );
-function deleteNote(x){
-         var confirmDelete = confirm( "Are you sure you want to delete this Note?");
-             if(confirmDelete == true){              
-             window.location = "backend/delete.php?noteID=" + x;
-             }
-	}
+CKEDITOR.replace('editor');
+
+function validateForm() {
+    var title = document.querySelector('input[name="noteTitle"]').value.trim();
+    var content = CKEDITOR.instances.editor.getData().trim(); 
+
+    if (title === "") {
+        alert("Please enter the note title.");
+        return false;
+    }
+
+    var textContent = content.replace(/<[^>]*>/g, '').trim(); 
+    
+    if (textContent === "") {
+        alert("Please enter the note content.");
+        return false;
+    }
+
+    return true;
+}
+
+function deleteNote(id){
+    if(confirm("Are you sure you want to delete this note?")){
+        window.location = "backend/delete.php?noteID=" + id;
+    }
+}
+
 function logOut(){
     window.location = "backend/logout.php";
 }
 </script>
+
 </body>
 </html>
-<?php }?>

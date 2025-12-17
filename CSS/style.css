@@ -1,18 +1,36 @@
-/* All Page Styling goes here */
 @import 'bootstrap.min.css';
 @import 'fontawesome.min.css';
 
-/* Prevents Page Content from hiding below the header */
+
+body {
+    background-color: #f0f2f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .pageBelowNav{
     margin-top: 80px;
 }
-/* Style on the genuine image inside footer */
+
+.container{
+    margin-top: 30px;
+}   
+
+.table-scroll {
+    max-height: 70vh; 
+    overflow-y: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+}
+
+.note-content-cell {
+    max-width: 480px;
+    white-space: normal; 
+    overflow: hidden;
+    text-overflow: ellipsis; 
+}
+
 img.genuine-icon{
     margin-top: 15px;
     width:175px;
     height:175px;
-}
-/* Styles on the Main Content Containers */
-.container{
-    margin-top: 30px;
 }

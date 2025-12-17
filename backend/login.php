@@ -1,7 +1,6 @@
-<?php  /*
-    code by Cozy 👽 https://github.com/ItsCosmas
-*/
-include('connection.php'); // Get the Connection Class
+<?php
+
+include('connection.php');
 
 if(isset($_POST['username'], $_POST['password'])){
   
