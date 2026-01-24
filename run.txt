@@ -1,2 +1,0 @@
-http://localhost/PHP-CRUD-app/
-http://localhost/phpmyadmin/

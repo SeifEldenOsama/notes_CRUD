@@ -1,0 +1,10 @@
+<?php
+// Database configuration template
+// Rename this file to config.php and update the values
+
+define('DB_HOST', 'localhost');
+define('DB_PORT', '3307');
+define('DB_NAME', 'crud');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+?>
